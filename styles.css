@@ -1,0 +1,114 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+  background: #f7f9fc;
+  color: #333;
+}
+
+h1, h3 {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  padding: 8px;
+  font-size: 1rem;
+}
+
+input[type="text"], input[type="number"], select {
+  flex: 1 1 150px;
+}
+
+button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  flex: 0 0 100px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#transactions {
+  margin-top: 20px;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgb(0 0 0 / 0.1);
+  align-items: center;
+}
+
+.income {
+  border-left: 4px solid green;
+}
+
+.expense {
+  border-left: 4px solid red;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: white;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  gap: 5px; /* reduce spacing */
+}
+
+.chart-container {
+  max-width: 220px; /* just a bit bigger than canvas */
+  margin: 20px auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+canvas#expenseChart {
+  display: block;
+  margin: 0 auto;  /* center horizontally */
+  width: 200px !important;
+  height: 200px !important;
+}
+
+#summary {
+  margin-top: 30px;
+  text-align: center;
+}
+
+#summary span {
+  font-weight: bold;
+  margin: 0 15px;
+  font-size: 1.2rem;
+}
+
+.alert {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+

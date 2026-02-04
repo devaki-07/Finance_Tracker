@@ -9,45 +9,31 @@ const totalExpense = document.getElementById("total-expense");
 const balance = document.getElementById("balance");
 const alertBox = document.getElementById("budget-alert");
 
-/* ===== Load from LocalStorage ===== */
-let income = Number(localStorage.getItem("income")) || 0;
-let expense = Number(localStorage.getItem("expense")) || 0;
+/* ===== LocalStorage ===== */
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+let income = 0;
+let expense = 0;
 
-/* ===== Chart Setup ===== */
+/* ===== Chart ===== */
 let expenseLabels = [];
 let expenseAmounts = [];
 
 const ctx = document.getElementById("expenseChart");
 
-let expenseChart = new Chart(ctx, {
+const expenseChart = new Chart(ctx, {
   type: "pie",
   data: {
     labels: expenseLabels,
     datasets: [{
       data: expenseAmounts,
-      backgroundColor: [
-        "#ff7675",
-        "#55efc4",
-        "#74b9ff",
-        "#ffeaa7",
-        "#a29bfe"
-      ]
+      backgroundColor: ["#ff7675", "#74b9ff", "#55efc4", "#ffeaa7"]
     }]
   }
 });
 
-/* ===== Page Load ===== */
-window.onload = function () {
-  transactions.forEach(t => {
-    addTransactionToUI(t.desc, t.amount, t.type);
-    if (t.type === "expense") {
-      expenseLabels.push(t.desc);
-      expenseAmounts.push(t.amount);
-    }
-  });
-  expenseChart.update();
-  updateSummary();
+/* ===== Load ===== */
+window.onload = () => {
+  reloadUI();
 };
 
 /* ===== Add Transaction ===== */
@@ -58,44 +44,55 @@ form.addEventListener("submit", (e) => {
   const amount = Number(amountInput.value);
   const type = typeInput.value;
 
-  if (!desc || !amount || !type) {
-    alert("Please fill all fields");
-    return;
-  }
-
-  addTransactionToUI(desc, amount, type);
-
   transactions.push({ desc, amount, type });
-
-  if (type === "income") {
-    income += amount;
-  } else {
-    expense += amount;
-    expenseLabels.push(desc);
-    expenseAmounts.push(amount);
-    expenseChart.update();
-  }
-
   localStorage.setItem("transactions", JSON.stringify(transactions));
-  localStorage.setItem("income", income);
-  localStorage.setItem("expense", expense);
-
-  updateSummary();
 
   descInput.value = "";
   amountInput.value = "";
   typeInput.value = "";
+
+  reloadUI();
 });
 
-/* ===== UI Function ===== */
-function addTransactionToUI(desc, amount, type) {
-  const div = document.createElement("div");
-  div.classList.add("transaction", type);
-  div.innerHTML = `
-    <span>${desc}</span>
-    <span>${type === "income" ? "+" : "-"} ₹${amount}</span>
-  `;
-  transactionsDiv.appendChild(div);
+/* ===== UI ===== */
+function reloadUI() {
+  transactionsDiv.innerHTML = "";
+  income = 0;
+  expense = 0;
+  expenseLabels.length = 0;
+  expenseAmounts.length = 0;
+
+  transactions.forEach((t, index) => {
+    const div = document.createElement("div");
+    div.classList.add("transaction", t.type);
+
+    div.innerHTML = `
+      <span>${t.desc}</span>
+      <span>
+        ${t.type === "income" ? "+" : "-"} ₹${t.amount}
+        <button class="delete-btn">X</button>
+      </span>
+    `;
+
+    div.querySelector(".delete-btn").onclick = () => {
+      transactions.splice(index, 1);
+      localStorage.setItem("transactions", JSON.stringify(transactions));
+      reloadUI();
+    };
+
+    transactionsDiv.appendChild(div);
+
+    if (t.type === "income") {
+      income += t.amount;
+    } else {
+      expense += t.amount;
+      expenseLabels.push(t.desc);
+      expenseAmounts.push(t.amount);
+    }
+  });
+
+  expenseChart.update();
+  updateSummary();
 }
 
 /* ===== Summary ===== */
@@ -104,11 +101,9 @@ function updateSummary() {
   totalExpense.textContent = expense;
   balance.textContent = income - expense;
 
-  if (expense > income) {
-    alertBox.style.display = "block";
-  } else {
-    alertBox.style.display = "none";
-  }
+  alertBox.style.display = expense > income ? "block" : "none";
 }
+
+
 
 
